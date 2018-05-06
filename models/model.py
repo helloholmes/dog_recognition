@@ -11,6 +11,7 @@ import time
 from torch import nn
 from torchvision.models import vgg16
 from torchvision.models import resnet34
+from torchvision.models import resnet50
 from torchvision.models import inception_v3
 
 class BasicModule(nn.Module):
@@ -59,6 +60,41 @@ class ResNet34(BasicModule):
     def __init__(self, num_class=120):
         super(ResNet34, self).__init__()
         model = resnet34(pretrained=True)
+        self.features = nn.Sequential(model.conv1,
+                                    model.bn1,
+                                    model.relu,
+                                    model.maxpool,
+                                    model.layer1,
+                                    model.layer2,
+                                    model.layer3,
+                                    model.layer4,
+                                    model.avgpool)
+        for param in self.features.parameters():
+            param.requires_grad = False
+        num_ftr = model.fc.in_features
+        self.classifier = nn.Sequential(nn.Linear(num_ftr, 4096),
+                                        nn.ReLU(True),
+                                        nn.Dropout(p=0.5),
+                                        nn.Linear(4096, 4096),
+                                        nn.ReLU(True),
+                                        nn.Dropout(p=0.5),
+                                        nn.Linear(4096, num_class))
+
+    def set_requires_grad(self):
+        for param in self.features.parameters():
+            param.requires_grad = True
+
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
+
+class ResNet50(BasicModule):
+    # the input size: (batch, 3, 224, 224)
+    def __init__(self, num_class=120):
+        super(ResNet50, self).__init__()
+        model = resnet50(pretrained=True)
         self.features = nn.Sequential(model.conv1,
                                     model.bn1,
                                     model.relu,
