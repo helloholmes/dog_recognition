@@ -41,6 +41,11 @@ class Vgg16(BasicModule):
                                         nn.ReLU(True),
                                         nn.Dropout(p=0.5),
                                         nn.Linear(4096, num_class))
+
+    def set_requires_grad(self):
+        for param in self.features.parameters():
+            param.requires_grad = True
+
     def forward(self, x):
         x = self.features(x)
         x = x.view(x.size(0), -1)
@@ -70,6 +75,10 @@ class ResNet34(BasicModule):
                                         nn.ReLU(True),
                                         nn.Dropout(p=0.5),
                                         nn.Linear(4096, num_class))
+
+    def set_requires_grad(self):
+        for param in self.features.parameters():
+            param.requires_grad = True
 
     def forward(self, x):
         x = self.features(x)
