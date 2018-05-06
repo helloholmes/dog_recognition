@@ -9,13 +9,14 @@ import warnings
 
 class DefaultConfig(object):
     env = 'default'
-    model = 'Vgg16'
+    model = 'ResNet34'
 
     train_data_root = './train_valid_test/train'
     test_data_root = './train_valid_test/test'
     valid_data_root = './train_valid_test/valid'
 
     load_model_path = ''
+    save_model_path = './checkpoints/'
 
     batch_size = 128
     use_gpu = True
