@@ -2,6 +2,8 @@
 '''
 python 3.5
 pytorch 0.4.0
+visdom 0.1.7
+torchnet 0.0.2
 auther: helloholmes
 '''
 import torch
@@ -71,6 +73,6 @@ class ResNet34(BasicModule):
 
     def forward(self, x):
         x = self.features(x)
-        x = x.view(x.size[0], -1)
+        x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x
